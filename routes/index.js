@@ -5,7 +5,6 @@ var mongoose = require('mongoose');
 var validation = require('./validation');
 var MongoClient = require('mongodb').MongoClient;
 router.post('/form', function(req, res, next) {
-console.log(req.body);
     validation(req.body, function(err, data) {
         if (err) {
             res.status(400).json(err);
