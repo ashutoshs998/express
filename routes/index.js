@@ -4,8 +4,8 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var validation = require('./validation');
 var MongoClient = require('mongodb').MongoClient;
-router.post('/form', function(req, res, next) {
-    validation(req.body, function(err, data) {
+router.post('/register', function(req, res, next) {
+    validation.register_validation(req.body, function(err, data) {
         if (err) {
             res.status(400).json(err);
         } else {
@@ -24,5 +24,22 @@ router.post('/form', function(req, res, next) {
             })
         }
     })
+});
+router.post('/login', function(req, res, next) {
+    validation.login_validation(req.body, function(err, data) {
+        if (err) {
+            next(err);
+        } else {
+            req.fetch.findOne({ username: data.username, password: data.password }, function(err, token) {
+                if (err) {
+                    next(err);
+                }
+                if(token)
+                res.json('logged in! access token: ' + token._id)
+            else
+                res.json('invalid user! Get registered')
+            });
+        }
+    });
 });
 module.exports = router;

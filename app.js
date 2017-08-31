@@ -8,6 +8,13 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use('/', routes);
+app.use(errorHandler);
+function errorHandler(err, req, res, next) {
+    if (err) {
+        res.status(500).json({ error: err });
+        res.json(err.message);
+    }
+}
 app.listen(3000,function() {
     console.log("Server started at port number: 3000");
 });
