@@ -9,7 +9,6 @@ router.post('/form', function(req, res, next) {
         if (err) {
             res.status(400).json(err);
         } else {
-
             var detail = new req.fetch({
                 username: data.username,
                 email: data.email,
