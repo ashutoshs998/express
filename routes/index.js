@@ -42,4 +42,17 @@ router.post('/login', function(req, res, next) {
         }
     });
 });
+router.get('/user/get/:token', function(req, res, next) {
+    req.fetch.findOne({ _id: req.params.token }, function(err, data) {
+        if (err) {
+            next(err);
+        }
+        else if (data){
+            res.json(data)
+        }
+        else if(!data) {
+            res.json('userdetails not found');
+        }
+    });
+});
 module.exports = router;
