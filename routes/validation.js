@@ -24,7 +24,7 @@ module.exports = {
     }
 },
 login_validation :function(body, callback) {
-        if (body.username == "")
+        if (body.username=="")
             callback("empty username!", "");
         else if (body.password == "")
             callback("empty password!", "");

@@ -42,4 +42,15 @@ router.post('/login', function(req, res, next) {
         }
     });
 });
+router.get('/user/get/', function(req, res, next) {
+    req.fetch.findOne({ _id: req.params.access_token }, function(err, data) {
+        if (err) {
+            next(err);
+        } else if (data) {
+            res.json(data)
+        } else {
+            res.json('data not found');
+        }
+    });
+});
 module.exports = router;
