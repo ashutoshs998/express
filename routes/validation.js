@@ -1,5 +1,6 @@
 var encrypt = require('md5');
-module.exports = function(body, callback) {
+module.exports = {
+    register_validation :function(body, callback) {
     var valid_mail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (body.username == null || body.username == "")
         callback("empty username!!", "");
@@ -21,4 +22,15 @@ module.exports = function(body, callback) {
         body.password = encrypt(body.password);
         callback("", body);
     }
-};
+},
+login_validation :function(body, callback) {
+        if (body.username=="")
+            callback("empty username!", "");
+        else if (body.password == "")
+            callback("empty password!", "");
+        else {
+            body.password = encrypt(body.password);
+            callback("", body);
+        }
+    }
+    };
