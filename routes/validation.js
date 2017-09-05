@@ -1,6 +1,6 @@
 var encrypt = require('md5');
 module.exports = {
-    register_validation :function(body, callback) {
+    register_validation: function(body, callback) {
         var valid_mail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (body.username == null || body.username == "")
             callback("empty username!!", "");
@@ -23,8 +23,8 @@ module.exports = {
             callback("", body);
         }
     },
-    login_validation :function(body, callback) {
-        if (body.username=="")
+    login_validation: function(body, callback) {
+        if (body.username == "")
             callback("empty username!", "");
         else if (body.password == "")
             callback("empty password!", "");
@@ -33,7 +33,7 @@ module.exports = {
             callback("", body);
         }
     },
-    validateAccess:function(req, callback) {
+    validateAccess: function(req, callback) {
         var token = req.params.access_token;
         req.fetch.findOne({ _id: token }, function(err, data) {
             if (err) {
@@ -41,7 +41,7 @@ module.exports = {
             } else if (data) {
                 callback("", data)
             } else {
-               callback('data not found',"");
+                callback('data not found', "");
             }
         });
     }

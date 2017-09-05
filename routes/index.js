@@ -21,7 +21,7 @@ router.post('/register', function(req, res, next) {
                 if (err) {
                     res.status(400).json(err.message);
                 } else
-                    res.json({error:0, message:"data inserted",data:data})
+                    res.json({ error: 0, message: "data inserted", data: data })
             })
         }
     })
@@ -35,31 +35,31 @@ router.post('/login', function(req, res, next) {
                 if (err) {
                     next(err);
                 }
-                if(access_token)
-                res.json('logged in. access_token: ' + access_token._id)
-            else
-                res.json({error:0, message:"invalid user! get registered",data:data})
+                if (access_token)
+                    res.json('logged in. access_token: ' + access_token._id)
+                else
+                    res.json({ error: 0, message: "invalid user! get registered", data: data })
             });
         }
     });
 });
 router.get('/user/get/:access_token', function(req, res, next) {
     var token = req.params.access_token;
-    validation.validateAccess(req, function(err, data){
+    validation.validateAccess(req, function(err, data) {
         req.fetch.find({}, function(err, user_data) {
             if (err) {
                 next(err);
-            }else if (data){
+            } else if (data) {
                 res.json(user_data)
-            }else if(!data) {
-                res.json({error:0, message:"data not found",data:data});
+            } else if (!data) {
+                res.json({ error: 0, message: "data not found", data: data });
             }
         });
     });
 });
 router.get('/user/delete/:access_token', function(req, res, next) {
     var token = req.params.access_token;
-    validation.validateAccess(req, function(err, data){
+    validation.validateAccess(req, function(err, data) {
         req.fetch.findOne({ _id: req.params.access_token }, function(err, data) {
             if (err) {
                 next(err);
@@ -68,13 +68,13 @@ router.get('/user/delete/:access_token', function(req, res, next) {
                     if (err) {
                         next(err);
                     } else {
-                        res.json({error:0, message:"data deleted",data:data});
+                        res.json({ error: 0, message: "data deleted", data: data });
                     }
                 });
             } else {
-                res.json({error:0, message:"data not found",data:data});
+                res.json({ error: 0, message: "data not found", data: data });
             }
         });
-     });
+    });
 });
 module.exports = router;
