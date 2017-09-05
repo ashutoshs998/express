@@ -21,7 +21,7 @@ router.post('/register', function(req, res, next) {
                 if (err) {
                     res.status(400).json(err.message);
                 } else
-                    res.json('Data Inserted')
+                    res.json({error:0, message:"data inserted",data:data})
             })
         }
     })
@@ -38,7 +38,7 @@ router.post('/login', function(req, res, next) {
                 if(access_token)
                 res.json('logged in. access_token: ' + access_token._id)
             else
-                res.json('invalid user! Get registered')
+                res.json({error:0, message:"invalid user! get registered",data:data})
             });
         }
     });
@@ -52,7 +52,7 @@ router.get('/user/get/:access_token', function(req, res, next) {
             }else if (data){
                 res.json(user_data)
             }else if(!data) {
-                res.json({error:0, message:"data not found",data});
+                res.json({error:0, message:"data not found",data:data});
             }
         });
     });
@@ -68,11 +68,11 @@ router.get('/user/delete/:access_token', function(req, res, next) {
                     if (err) {
                         next(err);
                     } else {
-                        res.json('data deleted');
+                        res.json({error:0, message:"data deleted",data:data});
                     }
                 });
             } else {
-                res.json('data not found');
+                res.json({error:0, message:"data not found",data:data});
             }
         });
      });
