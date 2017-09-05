@@ -77,4 +77,15 @@ router.get('/user/delete/:access_token', function(req, res, next) {
         });
     });
 });
+router.get('/user/list/:page', function(req, res, next) {
+    req.fetch.find({}).skip((req.params.page) * 10).limit(10).exec(function(err, data) {
+        if (err) {
+            next(err);
+        } else if (data) {
+            res.json(data);
+        } else {
+            res.json({ error: 0, message: "could not fetch data", data: data })
+        }
+    });
+});
 module.exports = router;
