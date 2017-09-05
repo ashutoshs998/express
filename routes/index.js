@@ -77,8 +77,9 @@ router.get('/user/delete/:access_token', function(req, res, next) {
         });
     });
 });
-router.get('/user/list/:page', function(req, res, next) {
-    req.fetch.find({}).skip((req.params.page) * 10).limit(10).exec(function(err, data) {
+router.get('/user/list/:page/:limit', function(req, res, next) {
+    req.params.limit = parseInt(req.params.limit);
+    req.fetch.find({}).skip((req.params.page) * req.params.limit).limit(req.params.limit).exec(function(err, data) {
         if (err) {
             next(err);
         } else if (data) {
