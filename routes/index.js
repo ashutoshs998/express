@@ -52,26 +52,29 @@ router.get('/user/get/:access_token', function(req, res, next) {
             }else if (data){
                 res.json(user_data)
             }else if(!data) {
-                res.json('userdetails not found');
+                res.json({error:0, message:"data not found",data});
             }
         });
     });
 });
 router.get('/user/delete/:access_token', function(req, res, next) {
-    req.fetch.findOne({ _id: req.params.access_token }, function(err, data) {
-        if (err) {
-            next(err);
-        } else if (data) {
-            req.fetch.remove({ "_id": data._id }, function(err, result) {
-                if (err) {
-                    next(err);
-                } else {
-                    res.json('data deleted');
-                }
-            });
-        } else {
-            res.json('data not found');
-        }
-    });
+    var token = req.params.access_token;
+    validation.validateAccess(req, function(err, data){
+        req.fetch.findOne({ _id: req.params.access_token }, function(err, data) {
+            if (err) {
+                next(err);
+            } else if (data) {
+                req.fetch.remove({ "_id": data._id }, function(err, result) {
+                    if (err) {
+                        next(err);
+                    } else {
+                        res.json('data deleted');
+                    }
+                });
+            } else {
+                res.json('data not found');
+            }
+        });
+     });
 });
 module.exports = router;
