@@ -9,11 +9,12 @@ app.use(bodyParser.urlencoded({
 }));
 app.use('/', routes);
 app.use(errorHandler);
+
 function errorHandler(err, req, res, next) {
     if (err) {
         res.status(500).json({ error: err });
     }
 }
-app.listen(3000,function() {
+app.listen(3000, function() {
     console.log("Server started at port number: 3000");
 });
