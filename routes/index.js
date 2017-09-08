@@ -38,11 +38,8 @@ router.post('/login', function(req, res, next) {
                 } else if (users_data) {
                     req.access_token_collection.findOneAndUpdate({ user_id: users_data._id }, { $set: { expiry: new Date().setHours(new Date().getHours() + 1) } }, function(err, access_token_data) {
                         if (err) {
-                            console.log(err)
                             next(err);
-
                         } else {
-                            console.log(access_token_data)
                             if (!access_token_data) {
                                 var access_Detail = new req.access_token_collection({
                                     user_id: users_data._id,
