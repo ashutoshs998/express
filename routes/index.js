@@ -36,24 +36,15 @@ router.post('/login', function(req, res, next) {
                 if (err) {
                     next(err);
                 } else if (users_data) {
-                    req.access_token_collection.findOne({ user_id: users_data._id }, function(err, access_token_data) {
+                    req.access_token_collection.findOneAndUpdate({ user_id: users_data.user_id }, function(err, access_token_data) {
                         if (err) {
                             next(err);
                         } else if (access_token_data) {
                             var expiryDate = new Date();
                             expiryDate.setHours(expiryDate.getHours() + 1);
-                            req.access_token_collection.findOneAndUpdate({ user_id: access_token_data.user_id }, {
-                                    $set: {
-                                        expiry: expiryDate
-                                    }
-                                },
-                                function(err, data) {
-                                    if (err) {
-                                        next(err);
-                                    } else {
-                                        res.json(data)
-                                    }
-                                });
+                            $set: {
+                                expiry: expiryDate
+                            }
                         } else {
                             var expiryDate = new Date();
                             expiryDate.setHours(expiryDate.getHours() + 1);
