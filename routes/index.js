@@ -36,30 +36,29 @@ router.post('/login', function(req, res, next) {
                 if (err) {
                     next(err);
                 } else if (users_data) {
-                    req.access_token_collection.findOne({ user_id: users_data.user_id }, function(err, access_token_data) {
+                    req.access_token_collection.findOneAndUpdate({ user_id: users_data._id }, { $set: { expiry: new Date().setHours(new Date().getHours() + 1) } }, function(err, access_token_data) {
                         if (err) {
+                            console.log(err)
                             next(err);
-                        } else if (access_token_data) {
-                            var expiryDate = new Date();
-                            expiryDate.setHours(expiryDate.getHours() + 1);
-                            $set: {
-                                expiry: expiryDate
-                            }
+
                         } else {
-                            var expiryDate = new Date();
-                            expiryDate.setHours(expiryDate.getHours() + 1);
-                            var access_Detail = new req.access_token_collection({
-                                user_id: users_data._id,
-                                access_token: encrypt(new Date()),
-                                expiry: expiryDate
-                            });
-                            access_Detail.save(function(err, data) {
-                                if (err) {
-                                    next(err);
-                                } else {
-                                    res.json(data)
-                                }
-                            });
+                            console.log(access_token_data)
+                            if (!access_token_data) {
+                                var access_Detail = new req.access_token_collection({
+                                    user_id: users_data._id,
+                                    access_token: encrypt(new Date()),
+                                    expiry: new Date().setHours(new Date().getHours() + 1)
+                                });
+                                access_Detail.save(function(err, data) {
+                                    if (err) {
+                                        next(err);
+                                    } else {
+                                        res.json(data)
+                                    }
+                                });
+                            } else {
+                                res.json(access_token_data)
+                            }
                         }
                     });
                 } else {
@@ -69,6 +68,7 @@ router.post('/login', function(req, res, next) {
         }
     });
 });
+
 router.get('/user/get/:access_token', function(req, res, next) {
     var token = req.params.access_token;
     validation.validateAccess(req, function(err, data) {
