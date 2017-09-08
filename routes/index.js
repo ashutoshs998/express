@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var encrypt = require('md5');
 var router = express.Router();
 var mongoose = require('mongoose');
 var validation = require('./validation');
@@ -31,18 +32,40 @@ router.post('/login', function(req, res, next) {
         if (err) {
             next(err);
         } else {
-            req.fetch.findOne({ username: data.username, password: data.password }, function(err, access_token) {
+            req.fetch.findOne({ username: data.username, password: data.password }, function(err, users_data) {
                 if (err) {
                     next(err);
+                } else if (users_data) {
+                    req.access_token_collection.findOneAndUpdate({ user_id: users_data._id }, { $set: { expiry: new Date().setHours(new Date().getHours() + 1) } }, function(err, access_token_data) {
+                        if (err) {
+                            next(err);
+                        } else {
+                            if (!access_token_data) {
+                                var access_Detail = new req.access_token_collection({
+                                    user_id: users_data._id,
+                                    access_token: encrypt(new Date()),
+                                    expiry: new Date().setHours(new Date().getHours() + 1)
+                                });
+                                access_Detail.save(function(err, data) {
+                                    if (err) {
+                                        next(err);
+                                    } else {
+                                        res.json(data)
+                                    }
+                                });
+                            } else {
+                                res.json(access_token_data)
+                            }
+                        }
+                    });
+                } else {
+                    res.json('Not a user !!!     Get registered')
                 }
-                if (access_token)
-                    res.json('logged in. access_token: ' + access_token._id)
-                else
-                    res.json({ error: 0, message: "invalid user! get registered", data: data })
             });
         }
     });
 });
+
 router.get('/user/get/:access_token', function(req, res, next) {
     var token = req.params.access_token;
     validation.validateAccess(req, function(err, data) {
