@@ -65,7 +65,6 @@ router.post('/login', function(req, res, next) {
         }
     });
 });
-
 router.get('/user/get/:access_token', function(req, res, next) {
     var token = req.params.access_token;
     validation.validateAccess(req, function(err, data) {
@@ -112,30 +111,41 @@ router.get('/user/list/:page/:limit', function(req, res, next) {
         }
     });
 });
-router.post('/user/address', function(req, res, next) {
+router.post('/user/address/:access_token', function(req, res, next) {
     var token = req.params.access_token;
-    validation.validateAddress(req.body, function(err, data) {
+    validation.validateAccess(req, function(err, access_token_data) {
         if (err) {
             next(err);
         } else {
-            validation.validateAccess(req, function(err, access_token_data) {
+            validation.validateAddress(req.body, function(err, data) {
                 if (err) {
                     next(err);
                 } else if (access_token_data) {
-                    var userAddress = new req.address_collection({
-                        user_id: data.user_id,
-                        address: data.address,
-                        phone_no: data.phone_no
-                    });
-                    userAddress.save(function(err, data) {
+                    req.address_collection.findOneAndUpdate({ user_id: access_token_data.user_id }, { $set: { address: data.address, phone_no: data.phone_no } }, function(err, token_data) {
                         if (err) {
                             next(err);
                         } else {
-                            res.json(data)
+                            if (!token_data) {
+                                var userAddress = new req.address_collection({
+                                    user_id: data.user_id,
+                                    address: data.address,
+                                    phone_no: data.phone_no
+                                });
+                                userAddress.save(function(err, data) {
+                                    if (err) {
+                                        next(err);
+                                    } else {
+                                        res.json(data)
+                                    }
+                                });
+                            } else {
+                                res.json(token_data)
+                            }
                         }
                     });
+
                 } else {
-                    res.json("Incorrect Access Token");;
+                    res.json("Incorrect Access Token");
                 }
             });
         }
