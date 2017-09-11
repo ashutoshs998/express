@@ -23,11 +23,25 @@ module.exports = function() {
         collection: 'access_token',
         strict: true
     });
+    var user_address = mongoose.Schema({
+        user_id: { type: String, required: true },
+        address: [{
+            city: String,
+            state: String,
+            pin_code: Number
+        }],
+        phone_no: Number
+    }, {
+        collection: 'address',
+        strict: true
+    });
     var get_data = conn.model(get_data, user_details);
     var access_token_model = conn.model('access_token', access_detail);
+    var user_address_model = conn.model('user_address_model', user_address);
     return function(req, res, next) {
         req.fetch = get_data;
         req.access_token_collection = access_token_model;
+        req.address_collection = user_address_model;
         next();
     }
 }

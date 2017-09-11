@@ -112,4 +112,32 @@ router.get('/user/list/:page/:limit', function(req, res, next) {
         }
     });
 });
+router.post('/user/address', function(req, res, next) {
+    validation.validateAddress(req.body, function(err, data) {
+        if (err) {
+            next(err);
+        } else {
+            req.access_token_collection.findOne({ access_token: req.query.access_token }, function(err, access_token_data) {
+                if (err) {
+                    next(err);
+                } else if (access_token_data) {
+                    var userAddress = new req.address_collection({
+                        user_id: data.user_id,
+                        address: data.address,
+                        phone_no: data.phone_no
+                    });
+                    userAddress.save(function(err, data) {
+                        if (err) {
+                            next(err);
+                        } else {
+                            res.json(data)
+                        }
+                    });
+                } else {
+                    res.json("Incorrect Access Token");;
+                }
+            });
+        }
+    });
+});
 module.exports = router;
