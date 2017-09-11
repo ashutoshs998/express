@@ -65,7 +65,6 @@ router.post('/login', function(req, res, next) {
         }
     });
 });
-
 router.get('/user/get/:access_token', function(req, res, next) {
     var token = req.params.access_token;
     validation.validateAccess(req, function(err, data) {
@@ -109,6 +108,46 @@ router.get('/user/list/:page/:limit', function(req, res, next) {
             res.json(data);
         } else {
             res.json({ error: 0, message: "could not fetch data", data: data })
+        }
+    });
+});
+router.post('/user/address/:access_token', function(req, res, next) {
+    var token = req.params.access_token;
+    validation.validateAccess(req, function(err, access_token_data) {
+        if (err) {
+            next(err);
+        } else {
+            validation.validateAddress(req.body, function(err, data) {
+                if (err) {
+                    next(err);
+                } else if (access_token_data) {
+                    req.address_collection.findOneAndUpdate({ user_id: access_token_data.user_id }, { $set: { address: data.address, phone_no: data.phone_no } }, function(err, token_data) {
+                        if (err) {
+                            next(err);
+                        } else {
+                            if (!token_data) {
+                                var userAddress = new req.address_collection({
+                                    user_id: data.user_id,
+                                    address: data.address,
+                                    phone_no: data.phone_no
+                                });
+                                userAddress.save(function(err, data) {
+                                    if (err) {
+                                        next(err);
+                                    } else {
+                                        res.json(data)
+                                    }
+                                });
+                            } else {
+                                res.json(token_data)
+                            }
+                        }
+                    });
+
+                } else {
+                    res.json("Incorrect Access Token");
+                }
+            });
         }
     });
 });
