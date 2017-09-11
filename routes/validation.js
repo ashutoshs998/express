@@ -36,7 +36,7 @@ module.exports = {
     },
     validateAccess: function(req, callback) {
         var token = req.params.access_token;
-        req.fetch.findOne({ _id: token }, function(err, data) {
+        req.access_token_collection.findOne({ access_token: token }, function(err, data) {
             if (err) {
                 next(err);
             } else if (data) {

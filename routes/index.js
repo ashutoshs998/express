@@ -113,11 +113,12 @@ router.get('/user/list/:page/:limit', function(req, res, next) {
     });
 });
 router.post('/user/address', function(req, res, next) {
+    var token = req.params.access_token;
     validation.validateAddress(req.body, function(err, data) {
         if (err) {
             next(err);
         } else {
-            req.access_token_collection.findOne({ access_token: req.query.access_token }, function(err, access_token_data) {
+            validation.validateAccess(req, function(err, access_token_data) {
                 if (err) {
                     next(err);
                 } else if (access_token_data) {
