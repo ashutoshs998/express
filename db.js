@@ -24,7 +24,7 @@ module.exports = function() {
         strict: true
     });
     var user_address = mongoose.Schema({
-        user_id: { type: String, required: true },
+        user_id: { type: String, required: true, ref: "get_data" },
         address: [{
             city: String,
             state: String,
@@ -35,7 +35,7 @@ module.exports = function() {
         collection: 'address',
         strict: true
     });
-    var get_data = conn.model(get_data, user_details);
+    var get_data = conn.model("get_data", user_details);
     var access_token_model = conn.model('access_token', access_detail);
     var user_address_model = conn.model('user_address_model', user_address);
     return function(req, res, next) {

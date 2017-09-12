@@ -68,15 +68,19 @@ router.post('/login', function(req, res, next) {
 router.get('/user/get/:access_token', function(req, res, next) {
     var token = req.params.access_token;
     validation.validateAccess(req, function(err, data) {
-        req.fetch.find({}, function(err, user_data) {
-            if (err) {
-                next(err);
-            } else if (data) {
-                res.json(user_data)
-            } else if (!data) {
-                res.json({ error: 0, message: "data not found", data: data });
-            }
-        });
+        if (err) {
+            next(err);
+        } else {
+            req.address_collection.find({ user_id: data.user_id }).populate('user_id').exec(function(err, address_data) {
+                if (err) {
+                    next(err);
+                } else if (address_data) {
+                    res.json({ error: 0, message: "data deleted", data: address_data })
+                } else {
+                    res.json("can't fetch data")
+                }
+            });
+        }
     });
 });
 router.get('/user/delete/:access_token', function(req, res, next) {
