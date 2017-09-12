@@ -24,7 +24,7 @@ module.exports = function() {
         strict: true
     });
     var user_address = mongoose.Schema({
-        user_id: { type: String, required: true },
+        user_id: { type: String, required: true, ref: get_data },
         address: [{
             city: String,
             state: String,
