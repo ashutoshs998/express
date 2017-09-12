@@ -75,7 +75,7 @@ router.get('/user/get/:access_token', function(req, res, next) {
                 if (err) {
                     next(err);
                 } else if (address_data) {
-                    res.json(address_data)
+                    res.json({ error: 0, message: "data deleted", data: address_data })
                 } else {
                     res.json("can't fetch data")
                 }
