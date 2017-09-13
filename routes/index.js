@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var encrypt = require('md5');
 var router = express.Router();
+var jwt = require('jsonwebtoken');
 var mongoose = require('mongoose');
 var validation = require('./validation');
 // var middleware = require("../midleware/middleware.js")
@@ -35,31 +36,13 @@ router.post('/login', function(req, res, next) {
             req.fetch.findOne({ username: data.username, password: data.password }, function(err, users_data) {
                 if (err) {
                     next(err);
-                } else if (users_data) {
-                    req.access_token_collection.findOneAndUpdate({ user_id: users_data._id }, { $set: { expiry: new Date().setHours(new Date().getHours() + 1) } }, function(err, access_token_data) {
-                        if (err) {
-                            next(err);
-                        } else {
-                            if (!access_token_data) {
-                                var access_Detail = new req.access_token_collection({
-                                    user_id: users_data._id,
-                                    access_token: encrypt(new Date()),
-                                    expiry: new Date().setHours(new Date().getHours() + 1)
-                                });
-                                access_Detail.save(function(err, data) {
-                                    if (err) {
-                                        next(err);
-                                    } else {
-                                        res.json(data)
-                                    }
-                                });
-                            } else {
-                                res.json(access_token_data)
-                            }
-                        }
+                } else if (data) {
+                    var token = jwt.sign({ user_id: users_data._id }, "jwt_tok", {
+                        expiresIn: 3600000
                     });
+                    res.json({ token: token })
                 } else {
-                    res.json('Not a user !!!     Get registered')
+                    res.json('Not a user!Get registered')
                 }
             });
         }
@@ -75,7 +58,7 @@ router.get('/user/get/:access_token', function(req, res, next) {
                 if (err) {
                     next(err);
                 } else if (address_data) {
-                    res.json({ error: 0, message: "data deleted", data: address_data })
+                    res.json({ error: 0, message: "data found", data: address_data })
                 } else {
                     res.json("can't fetch data")
                 }
