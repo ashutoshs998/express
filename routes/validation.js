@@ -1,5 +1,6 @@
 var encrypt = require('md5');
 var _ = require('lodash');
+var jwt = require('jsonwebtoken');
 module.exports = {
     register_validation: function(body, callback) {
         var valid_mail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -35,14 +36,11 @@ module.exports = {
         }
     },
     validateAccess: function(req, callback) {
-        var token = req.params.access_token;
-        req.access_token_collection.findOne({ access_token: token }, function(err, data) {
+        jwt.verify(req.params.access_token, jwt_tok, function(err, access_token_data) {
             if (err) {
                 next(err);
-            } else if (data) {
-                callback("", data)
             } else {
-                callback('data not found', "");
+                callback("", access_token_data);
             }
         });
     },
@@ -66,6 +64,5 @@ module.exports = {
         } else {
             callback("enter address", null)
         }
-
     }
 };
