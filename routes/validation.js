@@ -35,15 +35,6 @@ module.exports = {
             callback("", body);
         }
     },
-    validateAccess: function(req, callback) {
-        jwt.verify(req.params.access_token, jwt_tok, function(err, access_token_data) {
-            if (err) {
-                next(err);
-            } else {
-                callback("", access_token_data);
-            }
-        });
-    },
     validateAddress: function(body, callback) {
         if (body.user_id == null || body.user_id == "") {
             callback("enter user id", "");
